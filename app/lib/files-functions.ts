@@ -3,7 +3,7 @@ import fs from 'fs';
 export async function convertTranslationsToTextFile(data: any) {
   // Convert to a JSON string
   // const fileContent = JSON.stringify(data, null, 2);
-  const fileContent = data.map((row:any)=> `Sentence:\t${row.sentence}\nTranslation:\t${row.translation}\n`).join('\n');
+  const fileContent = data.map((row:any)=> `${row.sentence}\n${row.translation}\n`).join('\n');
 
   // Create a blob and a URL for the file
   const blob = new Blob([fileContent], { type: 'application/text' });

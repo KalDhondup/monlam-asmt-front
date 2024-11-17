@@ -2,23 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { fileUpload } from "./lib/fetch-functions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
   const [fileData, setfileData] = useState<any>();
 
-  // useEffect(() => {
-  //   return () => {
-  //     alert("closing");
-  //   };
-  // }, []);
-
   async function onFileSubmit(event: any) {
     event.preventDefault();
-    // const file = event.target.elements["text-file"].files[0];
 
-    // console.log("onFileSubjit: ", event.target.elements["text-file"].files[0]);
     const data = await uploadFile(fileData);
 
     if (!data) return;
@@ -45,25 +37,26 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-4xl mx-auto max-h-screen my-8">
+    <main className="max-w-4xl my-8 mx-4 md:mx-auto max-h-screen ">
       <form onSubmit={onFileSubmit} className="flex flex-col gap-2">
-        <div className="bg-gray-200 p-8 flex flex-row items-center">
+        <div className="bg-gray-200 p-8 flex flex-col md:flex-row md:items-center gap-4">
           <input
+            className="flex-1 px-2 py-4 border border-dashed border-gray-100 hover:cursor-pointer"
             type="file"
             accept=".txt"
             onChange={(event: any) => {
-              let textFile = event.target?.files[0];
-              if (!textFile) {
-                alert("File selection Failed!");
+              if (!event.target?.files.length) {
+                setfileData(undefined);
                 return;
               }
-              console.log("textFile:", textFile);
-              setfileData(textFile);
+
+              setfileData(event.target?.files[0]);
             }}
           />
-          <div className="flex flex-col">
+          <div className="flex flex-col flex-1">
             {fileData && (
               <>
+                <p className="italic py-2">File Details:</p>
                 <p>{fileData.name}</p>
                 <p>{fileData.type}</p>
                 <p>{fileData.size / 1000} KB</p>

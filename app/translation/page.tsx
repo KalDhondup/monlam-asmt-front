@@ -9,7 +9,6 @@ export default function TranslationPage() {
   const searchParams = useSearchParams();
   const translationFormRef = useRef<any>(null);
   const [translations, settranslations] = useState([]);
-  const search = searchParams.get("fileId");
 
   useEffect(() => {
     getFileSentences().then((data: any) => {
@@ -76,7 +75,6 @@ export default function TranslationPage() {
       ),
     });
 
-    console.log("updatedData :", updatedTranslations);
     if (!updatedTranslations.length) return;
 
     const { error } = await fetchFunction({
@@ -90,41 +88,57 @@ export default function TranslationPage() {
       return;
     }
 
-    const data = await getFileSentences();
-
-    console.log("get sentences", { data });
+    await getFileSentences().then((data: any) => {
+      settranslations(data);
+    });
+    alert("Translations saved successfully!");
   }
 
+  if (!translations.length) {
+    return (
+      <div className="max-w-4xl mx-4 md:mx-auto px-8 mb-16 py-16">
+        No text file selected for translation!
+      </div>
+    );
+  }
   return (
-    <main className="max-w-6xl mx-auto px-8">
+    <main className="max-w-4xl mx-4 md:mx-auto px-8 mb-16">
       <form
         onSubmit={exportTranslations}
         ref={translationFormRef}
         className=""
       >
-        <div className="flex flex-row-reverse justify-between p-2 sticky top-0 bg-orange-50">
-          <button type="submit" className="bg-blue-500 px-2 text-white">
-            Export
-          </button>
-          <button
-            onClick={onSaveTranslations}
-            type="button"
-            className="bg-blue-500 px-2 text-white"
-          >
-            Save
-          </button>
+        <div className="flex flex-row justify-between items-center sticky top-8 bg-orange-50">
+          <p className="text-xl py-8">Translate</p>
+          <div className="flex gap-2">
+            <button
+              onClick={onSaveTranslations}
+              type="button"
+              className="bg-gray-600 px-2 py-1 text-white"
+            >
+              Save
+            </button>
+            <button type="submit" className="bg-blue-500 px-2 py-1 text-white">
+              Export
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col">
+
+        <div className="flex flex-col gap-16">
           {translations.map((row: any) => {
             return (
-              <p className="flex flex-row w-full p-4">
+              <div
+                key={row.id}
+                className="flex flex-col md:flex-row w-full gap-2"
+              >
                 <div className="flex-1">{row.sentence}</div>
                 <textarea
                   className="translation-input flex-1  border outline-blue-300 p-2 w-full"
                   id={row.id}
+                  placeholder="Type translations here"
                   defaultValue={row.translation}
                 />
-              </p>
+              </div>
             );
           })}
         </div>
